@@ -1,0 +1,978 @@
+<html>
+<head>
+	<style>
+		.div {
+			font-size: 33px;
+			font-family: "Lucida Console", "Courier New", monospace;
+		}
+		.controls {
+			font-size: 25px;
+			font-family: "Lucida Console", "Courier New", monospace;
+		}
+		.reward {
+			font-size: 125px;
+			font-family: "Lucida Console", "Courier New", monospace;
+			width: 125px;
+			height: 200px;
+		}
+		.stat {
+			font-size: 15px;
+		}
+		.fight_button {
+			font-size: 20px;
+		}
+		.controls_2 {
+			font-size: 25px;
+			font-family: "Lucida Console", "Courier New", monospace;
+			width: 200px;
+		}
+		.header {
+			font-size: 15px;
+			font-family: "Lucida Console", "Courier New", monospace;
+		}
+	</style>
+</head>
+
+<body onload="game_boot()">
+	<div id="div_1" class="div">
+		<p id="header" class="header">Header</p>
+		<p id="line"></p>
+		<p id="stat" class="stat"></p>
+	</div>
+	
+	<div id="controls" class="controls">
+		<input class="controls" type="button" value="⬜️" onclick="console.log(skill_points);" /><input id="up_button" class="controls" type="button" value="🔼"  onclick=" move_up();"/><input type="button" class="controls" value="⬜️" onclick=" move_right();" />
+		<br>
+		<input class="controls" id="left_button" type="button" value="◀️" onclick=" move_left();" /><input type="button" class="controls" value="⬜️"  /><input id="right_button"class="controls"  type="button" value="▶️" onclick=" move_right();" />
+		<br>
+		<input type="button" value="⬜️" class="controls" onclick=" move_left();" /><input id="down_button" class="controls" type="button" value="🔽"  onclick=" move_down();"/><input type="button" class="controls" value="⬜️" onclick=" move_right();" />
+	</div>
+</body>
+</html>
+
+<script>
+	var map = [
+		["🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳"],
+		["🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳"],
+		["🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳"],
+		["🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳"],
+		["🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳"],
+		["🔳","🔳","🔳","🔳","🟩","🦍","🍌","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🔳","🔳","🔳","🔳","🔳"],
+		["🔳","🔳","🔳","🔳","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🍌","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🔳","🔳","🔳","🔳","🔳"],
+		["🔳","🔳","🔳","🔳","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🌾","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🍌","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🔳","🔳","🔳","🔳","🔳"],
+		["🔳","🔳","🔳","🔳","🟩","🟩","🟩","🟩","🟩","🔳","🌾","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🍌","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🔳","🔳","🔳","🔳","🔳"],
+		["🔳","🔳","🔳","🔳","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🔳","🔳","🔳","🔳","🔳"],
+		["🔳","🔳","🔳","🔳","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🔳","🔳","🔳","🔳","🔳"],
+		["🔳","🔳","🔳","🔳","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🍌","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🔳","🔳","🔳","🔳","🔳"],
+		["🔳","🔳","🔳","🔳","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🔳","🔳","🔳","🔳","🔳"],
+		["🔳","🔳","🔳","🔳","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🔳","🔳","🔳","🔳","🔳"],
+		["🔳","🔳","🔳","🔳","🟩","🟩","🟩","🟩","🦍","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🍌","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🔳","🔳","🔳","🔳","🔳"],
+		["🔳","🔳","🔳","🔳","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🔳","🔳","🔳","🔳","🔳"],
+		["🔳","🔳","🔳","🔳","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🔳","🔳","🔳","🔳","🔳"],
+		["🔳","🔳","🔳","🔳","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🍌","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🔳","🔳","🔳","🔳","🔳"],
+		["🔳","🔳","🔳","🔳","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🔳","🔳","🔳","🔳","🔳"],
+		["🔳","🔳","🔳","🔳","🟩","🟩","🍌","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🔳","🔳","🔳","🔳","🔳"],
+		["🔳","🔳","🔳","🔳","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🔳","🔳","🔳","🔳","🔳"],
+		["🔳","🔳","🔳","🔳","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🔳","🔳","🔳","🔳","🔳"],
+		["🔳","🔳","🔳","🔳","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🔳","🔳","🔳","🔳","🔳"],
+		["🔳","🔳","🔳","🔳","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🟩","🔳","🔳","🔳","🔳","🔳"],
+		["🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳"],
+		["🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳"],
+		["🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳"],
+		["🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳"],
+		["🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳"],				
+	];
+	var spacer = "<br>";
+	var score = 0;
+	var player = "🐒";
+	var floor = "🟩";
+	var player_x = 9;			
+	var player_y = 9;
+	var allowed_var = "";
+	var player_health = 100;
+	var player_xp = 0;
+	var player_lvl = 1;
+	var lvl_next = 20;		
+	var bananas = 0;
+	var skill_points = 0;
+	var player_power = 2;
+	var player_precision = 3;
+	var stats_string = "bananas: "+bananas;
+	var direction = "";
+	var names = ["Chris																																																																																																																		","Greg","Morty","George","Thomas","James","Jimmy","Joe","John","Joey","Kevin","Mark","Karl","Lewis","Jarred","Jeremy","Luke","Lucas","Nolan"];
+	var enemyLvl = 0;
+	var enemyHealth = 100;
+	var enemyMove = 0;
+	var maxPrecision = 1;
+	var enemyPrecision = 0;
+	var enemyPower = 0;
+	//------------------------------;
+	var attackNumber = "";
+	var animationAllowed = "True";
+	var beenToAttack = "False";
+	var stopBar  = "True";
+	var allowedRewards = 1;
+	//-------------------------------;
+	var button_1 = "rewardButton_1";
+	var button_2 = "rewardButton_2";
+	var button_3 = "rewardButton_3";
+	
+	
+	function print(text) {
+		document.getElementById("line").innerHTML = text;
+	}
+	function graphics(map) {
+		
+	}
+	function game_boot() {
+		game();
+		
+	}
+	
+		
+	function game() {
+		if (playerLvl => 5) {
+			allowedRewards = 2;
+		}
+		var allowance = "";
+		map[player_y][player_x] = player;
+		graphics(map=map);
+		var view = [
+			["0","0","0","0","0","0","0","0","0"],
+			["0","0","0","0","0","0","0","0","0"],
+			["0","0","0","0","0","0","0","0","0"],
+			["0","0","0","0","0","0","0","0","0"],
+			["0","0","0","0","0","0","0","0","0"],
+			["0","0","0","0","X","0","0","0","0"],
+			["0","0","0","0","0","0","0","0","0"],
+			["0","0","0","0","0","0","0","0","0"],
+			["0","0","0","0","0","0","0","0","0"],
+			["0","0","0","0","0","0","0","0","0"],
+			["0","0","0","0","0","0","0","0","0"],
+		];
+		view[0][0] = map[player_y-5][player_x-4];
+		view[0][1] = map[player_y-5][player_x-3];
+		view[0][2] = map[player_y-5][player_x-2];
+		view[0][3] = map[player_y-5][player_x-1];
+		view[0][4] = map[player_y-5][player_x];
+		view[0][5] = map[player_y-5][player_x+1];
+		view[0][6] = map[player_y-5][player_x+2];
+		view[0][7] = map[player_y-5][player_x+3];
+		view[0][8] = map[player_y-5][player_x+4];		
+				
+		view[1][0] = map[player_y-4][player_x-4];
+		view[1][1] = map[player_y-4][player_x-3];
+		view[1][2] = map[player_y-4][player_x-2];
+		view[1][3] = map[player_y-4][player_x-1];
+		view[1][4] = map[player_y-4][player_x];
+		view[1][5] = map[player_y-4][player_x+1];
+		view[1][6] = map[player_y-4][player_x+2];
+		view[1][7] = map[player_y-4][player_x+3];
+		view[1][8] = map[player_y-4][player_x+4];		
+		
+		view[2][0] = map[player_y-3][player_x-4];
+		view[2][1] = map[player_y-3][player_x-3];
+		view[2][2] = map[player_y-3][player_x-2];
+		view[2][3] = map[player_y-3][player_x-1];
+		view[2][4] = map[player_y-3][player_x];
+		view[2][5] = map[player_y-3][player_x+1];
+		view[2][6] = map[player_y-3][player_x+2];
+		view[2][7] = map[player_y-3][player_x+3];
+		view[2][8] = map[player_y-3][player_x+4];		
+		
+		view[3][0] = map[player_y-2][player_x-4];
+		view[3][1] = map[player_y-2][player_x-3];
+		view[3][2] = map[player_y-2][player_x-2];
+		view[3][3] = map[player_y-2][player_x-1];
+		view[3][4] = map[player_y-2][player_x];
+		view[3][5] = map[player_y-2][player_x+1];
+		view[3][6] = map[player_y-2][player_x+2];
+		view[3][7] = map[player_y-2][player_x+3];
+		view[3][8] = map[player_y-2][player_x+4];	
+			
+		view[4][0] = map[player_y-1][player_x-4];
+		view[4][1] = map[player_y-1][player_x-3];
+		view[4][2] = map[player_y-1][player_x-2];
+		view[4][3] = map[player_y-1][player_x-1];
+		view[4][4] = map[player_y-1][player_x];
+		view[4][5] = map[player_y-1][player_x+1];
+		view[4][6] = map[player_y-1][player_x+2];
+		view[4][7] = map[player_y-1][player_x+3];
+		view[4][8] = map[player_y-1][player_x+4];	
+			
+		view[5][0] = map[player_y-0][player_x-4];
+		view[5][1] = map[player_y-0][player_x-3];
+		view[5][2] = map[player_y-0][player_x-2];
+		view[5][3] = map[player_y-0][player_x-1];
+		view[5][4] = map[player_y-0][player_x];
+		view[5][5] = map[player_y-0][player_x+1];
+		view[5][6] = map[player_y-0][player_x+2];
+		view[5][7] = map[player_y-0][player_x+3];
+		view[5][8] = map[player_y-0][player_x+4];
+		
+		view[6][0] = map[player_y+1][player_x-4];
+		view[6][1] = map[player_y+1][player_x-3];
+		view[6][2] = map[player_y+1][player_x-2];
+		view[6][3] = map[player_y+1][player_x-1];
+		view[6][4] = map[player_y+1][player_x];
+		view[6][5] = map[player_y+1][player_x+1];
+		view[6][6] = map[player_y+1][player_x+2];
+		view[6][7] = map[player_y+1][player_x+3];
+		view[6][8] = map[player_y+1][player_x+4];	
+			
+		view[7][0] = map[player_y+2][player_x-4];
+		view[7][1] = map[player_y+2][player_x-3];
+		view[7][2] = map[player_y+2][player_x-2];
+		view[7][3] = map[player_y+2][player_x-1];
+		view[7][4] = map[player_y+2][player_x];
+		view[7][5] = map[player_y+2][player_x+1];
+		view[7][6] = map[player_y+2][player_x+2];
+		view[7][7] = map[player_y+2][player_x+3];
+		view[7][8] = map[player_y+2][player_x+4];
+		
+		view[8][0] = map[player_y+3][player_x-4];
+		view[8][1] = map[player_y+3][player_x-3];
+		view[8][2] = map[player_y+3][player_x-2];
+		view[8][3] = map[player_y+3][player_x-1];
+		view[8][4] = map[player_y+3][player_x];
+		view[8][5] = map[player_y+3][player_x+1];
+		view[8][6] = map[player_y+3][player_x+2];
+		view[8][7] = map[player_y+3][player_x+3];
+		view[8][8] = map[player_y+3][player_x+4];	
+			
+		view[9][0] = map[player_y+4][player_x-4];
+		view[9][1] = map[player_y+4][player_x-3];
+		view[9][2] = map[player_y+4][player_x-2];
+		view[9][3] = map[player_y+4][player_x-1];
+		view[9][4] = map[player_y+4][player_x];
+		view[9][5] = map[player_y+4][player_x+1];
+		view[9][6] = map[player_y+4][player_x+2];
+		view[9][7] = map[player_y+4][player_x+3];
+		view[9][8] = map[player_y+4][player_x+4];	
+			
+		view[10][0] = map[player_y+5][player_x-4];
+		view[10][1] = map[player_y+5][player_x-3];
+		view[10][2] = map[player_y+5][player_x-2];
+		view[10][3] = map[player_y+5][player_x-1];
+		view[10][4] = map[player_y+5][player_x];
+		view[10][5] = map[player_y+5][player_x+1];
+		view[10][6] = map[player_y+5][player_x+2];
+		view[10][7] = map[player_y+5][player_x+3];
+		view[10][8] = map[player_y+5][player_x+4];	
+		
+		var string_1 = "";
+		
+		for (let g = 0; g < view.length; g++) {
+			for (let i = 0; i < view[0].length; i++) {
+			string_1 = string_1 + view[g][i];
+			}
+			string_1 = string_1 + spacer;
+			
+		}
+		print(string_1);
+		document.getElementById("stat").innerHTML = ('bananas: '+bananas+'  health: '+player_health);
+		document.getElementById("header").innerHTML = ('xp: '+player_xp+'    lvl: '+player_lvl);
+		
+		
+	}
+	function getRandomArbitrary(min, max) {
+		return Math.random() * (max - min) + min;
+	}
+	function getRandomInt(min, max) {
+		min = Math.ceil(min);
+		max = Math.floor(max);
+		return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
+
+	function betaCuck() {
+		if((bananas - 1)<0) {
+			document.write("<h1>Where banana?</h1><br><p>You lose</p>");
+		}
+		else {
+			bananas = bananas - 1;
+			game();
+		}
+	}
+	
+	//Fighting
+	function enemyAttack() {
+		function enemyAnimation(effect) {
+			game();
+			setTimeout(() => {
+				player = effect;
+				map[player_y][player_x] = player;
+				game();
+				player = "🐒";
+				setTimeout(() => {
+					game();
+					setTimeout(() => {battleEpic();}, 1000);
+				}, 1000);
+			}, 1000);
+		}
+		var enemyAction = getRandomInt(0, enemyPrecision);
+		if (enemyAction == enemyPrecision) {
+			attackNumber = "";
+			game();
+			setTimeout(() => {battleEpic();}, 1000);
+			
+		}
+		else {
+			var enemyMove = getRandomInt(0,2);
+			if (enemyMove==0) {
+				player_health = player_health - (10+enemyPower);
+				enemyAnimation(effect="💫");
+				
+			}
+			else if (enemyMove==1) {
+				player_health = player_health - (20+enemyPower);
+				enemyAnimation(effect="💫");
+			}
+			else if (enemyMove==2) {
+				player_health = player_health - (30+enemyPower);
+				enemyAnimation(effect="💫");
+			}
+			else {
+				function doNothing() {
+					
+				}
+				doNothing();
+			}
+		}
+		
+	}
+	function scratch() {
+		var precision = getRandomInt(0,player_precision);
+		//console.log(precision);
+		if (precision == player_precision) {
+			enemyAttack();
+		}
+		else {
+			game();
+			if (direction=="up") {
+				setTimeout(() => {
+					map[player_y-1][player_x] = "💫";
+					game();
+					setTimeout(() => {
+						map[player_y-1][player_x] = "🦍";
+						game();
+						setTimeout(() => {enemyAttack();}, 1000);
+
+					}, 1000);
+				}, 1000);
+			}
+			else if (direction=="down") {
+				setTimeout(() => {
+					map[player_y+1][player_x] = "💫";
+					game();
+					setTimeout(() => {
+						map[player_y+1][player_x] = "🦍";
+						game();
+						setTimeout(() => {enemyAttack();}, 1000);
+
+					}, 1000);
+				}, 1000);
+			}
+			else if (direction=="left") {
+				setTimeout(() => {
+					map[player_y][player_x-1] = "💫";
+					game();
+					setTimeout(() => {
+						map[player_y][player_x-1] = "🦍";
+						game();
+						setTimeout(() => {enemyAttack();}, 1000);
+
+					}, 1000);
+				}, 1000);
+			}
+			else if (direction=="right") {
+				setTimeout(() => {
+					map[player_y][player_x+1] = "💫";
+					game();
+					setTimeout(() => {
+						map[player_y][player_x+1] = "🦍";
+						game();
+						setTimeout(() => {enemyAttack();}, 1000);
+
+					}, 1000);
+				}, 1000);
+			}	
+			enemyHealth = enemyHealth - (8+(player_power));
+			
+			}
+			
+		
+		
+	}
+	function hit() {
+		var precision = getRandomInt(0,player_precision);
+		//console.log(precision);
+		if (precision == player_precision) {
+			enemyAttack();
+		}
+		else {
+			game();
+			if (direction=="up") {
+				setTimeout(() => {
+					map[player_y-1][player_x] = "💫";
+					game();
+					setTimeout(() => {
+						map[player_y-1][player_x] = "🦍";
+						game();
+						setTimeout(() => {enemyAttack();}, 1000);
+
+					}, 1000);
+				}, 1000);
+			}
+			else if (direction=="down") {
+				setTimeout(() => {
+					map[player_y+1][player_x] = "💫";
+					game();
+					setTimeout(() => {
+						map[player_y+1][player_x] = "🦍";
+						game();
+						setTimeout(() => {enemyAttack();}, 1000);
+
+					}, 1000);
+				}, 1000);
+			}
+			else if (direction=="left") {
+				setTimeout(() => {
+					map[player_y][player_x-1] = "💫";
+					game();
+					setTimeout(() => {
+						map[player_y][player_x-1] = "🦍";
+						game();
+						setTimeout(() => {enemyAttack();}, 1000);
+
+					}, 1000);
+				}, 1000);
+			}
+			else if (direction=="right") {
+				setTimeout(() => {
+					map[player_y][player_x+1] = "💫";
+					game();
+					setTimeout(() => {
+						map[player_y][player_x+1] = "🦍";
+						game();
+						setTimeout(() => {enemyAttack();}, 1000);
+
+					}, 1000);
+				}, 1000);
+			}	
+			enemyHealth = enemyHealth - (18+(player_power));
+			
+			}
+			
+		
+		
+	}
+	function bite() {
+		var precision = getRandomInt(0,player_precision);
+		//console.log(precision);
+		if (precision == player_precision) {
+			enemyAttack();
+		}
+		else {
+			game();
+			if (direction=="up") {
+				setTimeout(() => {
+					map[player_y-1][player_x] = "💫";
+					game();
+					setTimeout(() => {
+						map[player_y-1][player_x] = "🦍";
+						game();
+						setTimeout(() => {enemyAttack();}, 1000);
+
+					}, 1000);
+				}, 1000);
+			}
+			else if (direction=="down") {
+				setTimeout(() => {
+					map[player_y+1][player_x] = "💫";
+					game();
+					setTimeout(() => {
+						map[player_y+1][player_x] = "🦍";
+						game();
+						setTimeout(() => {enemyAttack();}, 1000);
+
+					}, 1000);
+				}, 1000);
+			}
+			else if (direction=="left") {
+				setTimeout(() => {
+					map[player_y][player_x-1] = "💫";
+					game();
+					setTimeout(() => {
+						map[player_y][player_x-1] = "🦍";
+						game();
+						setTimeout(() => {enemyAttack();}, 1000);
+
+					}, 1000);
+				}, 1000);
+			}
+			else if (direction=="right") {
+				setTimeout(() => {
+					map[player_y][player_x+1] = "💫";
+					game();
+					setTimeout(() => {
+						map[player_y][player_x+1] = "🦍";
+						game();
+						setTimeout(() => {enemyAttack();}, 1000);
+
+					}, 1000);
+				}, 1000);
+			}	
+			enemyHealth = enemyHealth - (28+(player_power));
+			
+			}
+			
+		
+		
+	}
+	function doNothing() {
+		
+	}
+	function playerAttack2() {
+		if (beenToAttack == "False") {
+			//console.log(attackNumber);
+			if (attackNumber == 5) {
+				bite();
+			}
+			else if (attackNumber == 2) {
+				scratch();
+			}
+			else if (attackNumber == 3) {
+				scratch();
+			}
+			else if (attackNumber == 7) {
+				scratch();
+			}
+			else if (attackNumber == 8) {
+				scratch();
+			}
+			else if (attackNumber == 4) {
+				hit();
+			}
+			else if (attackNumber == 6) {
+				hit();
+			}
+			beenToAttack = "True";
+			stopBar = "True";
+			animationAllowed = "False";
+		}
+		else {
+			doNothing();
+		}
+
+	}
+	function stopAnimation() {
+		animationAllowed = 'False';
+	}
+	function counting() {
+		if (attackNumber == "") {
+			attackNumber = 1;
+		}
+		attackNumber = attackNumber + 1;
+				
+				
+		//textures
+		if (attackNumber==1) {
+			print("🔽⬜️⬜️⬜️⬜️⬜️⬜⬜️⬜️"+"<br>"+"🟦🟩🟩🟧🟥🟧🟩🟩🟦"+"<br>"+"🔼⬜️⬜️⬜️⬜️⬜️⬜⬜️⬜️"+"<br>"+"<button class='controls' onclick='stopAnimation();'>Attack</button>");	
+		}
+		else if (attackNumber==2) {
+			print("⬜🔽⬜️⬜️⬜️⬜️⬜⬜️⬜️"+"<br>"+"🟦🟩🟩🟧🟥🟧🟩🟩🟦"+"<br>"+"⬜🔼⬜️⬜️⬜️⬜️⬜⬜️⬜️"+"<br>"+"<button class='controls' onclick='stopAnimation();'>Attack</button>");	
+		}
+		else if (attackNumber==3) {
+			print("⬜⬜🔽⬜️⬜️⬜️⬜️⬜⬜️"+"<br>"+"🟦🟩🟩🟧🟥🟧🟩🟩🟦"+"<br>"+"⬜⬜🔼⬜️⬜️⬜️⬜⬜️⬜️"+"<br>"+"<button class='controls' onclick='stopAnimation();'>Attack</button>");	
+		}
+		else if (attackNumber==4) {
+			print("⬜⬜⬜🔽⬜️⬜️⬜️⬜️⬜"+"<br>"+"🟦🟩🟩🟧🟥🟧🟩🟩🟦"+"<br>"+"⬜⬜⬜🔼⬜️⬜️⬜️⬜⬜️"+"<br>"+"<button class='controls' class='controls' onclick='stopAnimation();'>Attack</button>");	
+		}
+		else if (attackNumber==5) {
+			print("⬜️⬜⬜⬜🔽⬜️⬜️⬜️⬜️"+"<br>"+"🟦🟩🟩🟧🟥🟧🟩🟩🟦"+"<br>"+"⬜️⬜⬜⬜🔼⬜️⬜️⬜⬜️"+"<br>"+"<button class='controls' onclick='stopAnimation();'>Attack</button>");	
+		}
+		else if (attackNumber==6) {
+			print("⬜⬜️⬜⬜⬜🔽⬜️⬜️⬜️"+"<br>"+"🟦🟩🟩🟧🟥🟧🟩🟩🟦"+"<br>"+"⬜⬜️⬜⬜⬜🔼⬜️⬜️⬜"+"<br>"+"<button class='controls' onclick='stopAnimation();'>Attack</button>");	
+		}
+		else if (attackNumber==7) {
+			print("⬜⬜⬜️⬜⬜⬜🔽⬜️⬜️"+"<br>"+"🟦🟩🟩🟧🟥🟧🟩🟩🟦"+"<br>"+"⬜⬜⬜️⬜⬜⬜🔼⬜️⬜️"+"<br>"+"<button class='controls' onclick='stopAnimation();'>Attack</button>");	
+		}
+		else if (attackNumber==8) {
+			print("⬜⬜⬜⬜️⬜⬜⬜🔽⬜️"+"<br>"+"🟦🟩🟩🟧🟥🟧🟩🟩🟦"+"<br>"+"⬜⬜⬜⬜️⬜⬜⬜🔼⬜️"+"<br>"+"<button class='controls' onclick='stopAnimation();'>Attack</button>");	
+		}
+		else if (attackNumber==9) {
+			print("⬜⬜⬜⬜⬜️⬜⬜⬜🔽"+"<br>"+"🟦🟩🟩🟧🟥🟧🟩🟩🟦"+"<br>"+"⬜⬜⬜⬜⬜️⬜⬜⬜🔼"+"<br>"+"<button class='controls' onclick='stopAnimation();'>Attack</button>");
+			enemyAttack();
+				
+		}
+	}
+	function unblockBar() {
+		stopBar = "False";
+		animationAllowed = "True";
+		playerAttack();
+	}
+	function playerAttack() {
+		function counter() {
+			if (animationAllowed == "True") {
+				counting();
+			}
+			else {
+				playerAttack2();
+			}
+
+		}
+		if (stopBar == "False") {
+			counter();
+			setTimeout(() => {	
+				counter();
+				setTimeout(() => {
+					counter();
+					setTimeout(() => {
+						counter();
+						setTimeout(() => {
+							counter();
+							setTimeout(() => {
+								counter();
+								setTimeout(() => {
+									counter();
+									setTimeout(() => {
+										counter();
+									}, 500);
+								}, 400);
+							}, 300);
+						}, 200);
+					}, 250);
+				}, 350);
+			}, 500);
+		}
+		
+		
+		//counter();	
+
+	}
+	function reward(button) {
+		if (allowedRewards > 0) {
+			var reward = getRandomInt(1,3);
+			if (reward == 1) {
+				var extraBananas = getRandomInt(1,10);
+				bananas = bananas + extraBananas;
+				document.getElementById(button).innerHTML = ("<p class='stat'>"+extraBananas + "x 🍌</p>");
+			}
+			else if (reward == 2) {
+				player_health = 100;
+				document.getElementById(button).innerHTML = ("<p class='stat'>➕ 100 </p>");
+			}
+			else if (reward == 3) {
+				if (player_lvl < enemyLvl) {
+					allowed(floor_check="large_reward");
+					document.getElementById(button).innerHTML = ("<p class='stat'>xp +70 </p>");
+				}
+				else {
+					allowed(floor_check="reward");
+					document.getElementById(button).innerHTML = ("<p class='stat'>xp +50 </p>");
+				}
+			allowedRewards = allowedRewards - 1;
+						
+		
+				
+			}
+			setTimeout(() => {
+				game();
+			}, 4000);
+		
+		}
+		else if(allowedRewards == 0) {
+			game();
+		}
+		console.log(allowedRewards);
+	}
+	
+	function battleEpic() {
+		
+		function initiate() {
+			function counting() {
+				if (attackNumber == "") {
+					attackNumber = 1;
+				}
+				attackNumber = attackNumber + 1;
+				
+				
+				//textures
+				if (attackNumber==1) {
+					print("🔽⬜️⬜️⬜️⬜️⬜️⬜⬜️⬜️"+"<br>"+"🟦🟩🟩🟧🟥🟧🟩🟩🟦"+"<br>"+"🔼⬜️⬜️⬜️⬜️⬜️⬜⬜️⬜️");	
+				}
+				else if (attackNumber==2) {
+					print("⬜🔽⬜️⬜️⬜️⬜️⬜⬜️⬜️"+"<br>"+"🟦🟩🟩🟧🟥🟧🟩🟩🟦"+"<br>"+"⬜🔼⬜️⬜️⬜️⬜️⬜⬜️⬜️");	
+				}
+				else if (attackNumber==3) {
+					print("⬜⬜🔽⬜️⬜️⬜️⬜️⬜⬜️"+"<br>"+"🟦🟩🟩🟧🟥🟧🟩🟩🟦"+"<br>"+"⬜⬜🔼⬜️⬜️⬜️⬜⬜️⬜️");	
+				}
+				else if (attackNumber==4) {
+					print("⬜⬜⬜🔽⬜️⬜️⬜️⬜️⬜"+"<br>"+"🟦🟩🟩🟧🟥🟧🟩🟩🟦"+"<br>"+"⬜⬜⬜🔼⬜️⬜️⬜️⬜⬜️");	
+				}
+				else if (attackNumber==5) {
+					print("⬜️⬜⬜⬜🔽⬜️⬜️⬜️⬜️"+"<br>"+"🟦🟩🟩🟧🟥🟧🟩🟩🟦"+"<br>"+"⬜️⬜⬜⬜🔼⬜️⬜️⬜⬜️");	
+				}
+				else if (attackNumber==6) {
+					print("⬜⬜️⬜⬜⬜🔽⬜️⬜️⬜️"+"<br>"+"🟦🟩🟩🟧🟥🟧🟩🟩🟦"+"<br>"+"⬜⬜️⬜⬜⬜🔼⬜️⬜️⬜");	
+				}
+				else if (attackNumber==7) {
+					print("⬜⬜⬜️⬜⬜⬜🔽⬜️⬜️"+"<br>"+"🟦🟩🟩🟧🟥🟧🟩🟩🟦"+"<br>"+"⬜⬜⬜️⬜⬜⬜🔼⬜️⬜️");	
+				}
+				else if (attackNumber==8) {
+					print("⬜⬜⬜⬜️⬜⬜⬜🔽⬜️"+"<br>"+"🟦🟩🟩🟧🟥🟧🟩🟩🟦"+"<br>"+"⬜⬜⬜⬜️⬜⬜⬜🔼⬜️");	
+				}
+				else if (attackNumber==9) {
+					print("⬜⬜⬜⬜⬜️⬜⬜⬜🔽"+"<br>"+"🟦🟩🟩🟧🟥🟧🟩🟩🟦"+"<br>"+"⬜⬜⬜⬜⬜️⬜⬜⬜🔼");	
+				}
+				
+				
+			}
+			var enemyMove = getRandomInt(1, 3);
+			enemyPrecision = getRandomInt(0, 3);
+			attackNumber = "";
+			beenToAttack = "False";
+			//console.log(enemyPrecision);
+			//print("<h6>Choose one:</h6><button onclick='scratch();' class='controls_2'>Scratch</button class='controls_2'><br><button onclick='hit();' class='controls_2'>Hit</button><br><button onclick='bite();' class='controls_2'		>Bite</button><br><h6>"+chosenName+"'s health: "+enemyHealth+"</h6>");
+			if (attackNumber == "") {
+				print("🔽⬜️⬜️⬜️⬜️⬜️⬜⬜️⬜️"+"<br>"+"🟦🟩🟩🟧🟥🟧🟩🟩🟦"+"<br>"+"🔼⬜️⬜️⬜️⬜️⬜️⬜⬜️⬜️"+"<br>"+"<button class='controls' onclick='unblockBar();'>Attack</button>"+"<br>"+"<h6>"+chosenName+"'s health: "+enemyHealth+"</h6>");
+			}
+			
+			//counting();
+			if (0>=enemyHealth) {
+				print("<h6>" + chosenName + " has decided to let you<br>choose your reward"+"<br>"+"<button onclick='reward(button=button_1);' id='rewardButton_1' class='reward'>🂠</button> ");
+				enemyLvl = 0;
+				enemyHealth = 100;
+				enemyMove = 0;
+				maxPrecision = 1;
+				enemyPrecision = 0;
+				enemyPower = 0;
+				
+			}
+			else if (0>=player_health) {
+				
+				
+				if (bananas > 0) {
+					bananas = bananas - 1;
+					player_health = 100;
+					game();
+				}
+				else if (bananas >= 7) {
+					var tax = getRandomInt(10, 40);
+					var loss = Math.round((bananas * tax)/100);
+					bananas  = bananas - loss;
+					player_health = 100;
+					game();
+				}
+				else if (bananas == 0) {
+					document.write("No bananas?");
+				}
+			}
+		}
+		initiate();
+		
+	
+	}
+	function battleInitiate() {
+		var names_len = (names.length);
+		var random_number = ((getRandomInt(1,names_len))-1);
+		chosenName = names[random_number];
+		var statement = "0";
+		while (statement == "0") {
+			var enemyLevelSelector = getRandomInt(0,5);
+		
+			if (enemyLevelSelector == "0") {
+				enemyLvl = getRandomInt(0, (player_lvl - 1));
+			}
+			else if (enemyLevelSelector == "1") {
+				enemyLvl = getRandomInt(0, (player_lvl + 3));
+			}
+			else if (enemyLevelSelector == "2") {
+				enemyLvl = getRandomInt(0, (player_lvl + 2));
+			}
+			if (enemyLevelSelector == "3") {
+				enemyLvl = getRandomInt(0, (player_lvl));
+			}
+			else if (enemyLevelSelector == "4") {
+				enemyLvl = getRandomInt(0, (player_lvl - 2));
+			}
+			else if (enemyLevelSelector == "5") {
+				enemyLvl = getRandomInt(0, (player_lvl - 3));
+			}
+			
+			if (enemyLvl>0) {
+				statement = 1;
+			}
+			
+		}
+		//Enemy stats
+		
+		var stats_points = enemyLvl;
+		enemyPrecision = getRandomInt(1, stats_points);
+		stats_points = stats_points - enemyPrecision;
+		enemyPower = getRandomInt(0, stats_points);
+		
+		//End of enemy stats
+		
+		
+		
+		print("<h6>wanna fight "+chosenName+"?</h6><h6>"+chosenName+"'s level: "+enemyLvl+"</h6><button onclick='battleEpic();' id='Chad' class='fight_button'>Yeah,let's fight !</button><br><br><button onclick='betaCuck();' id='Beta' class='fight_button'>Sorry, I can't! -1 banana</button>");
+	}
+	
+	//End of fighting
+	
+	function allowed(floor_check) {
+		if (floor_check=="🔳") {
+			allowed_var = "Barrier";
+		}
+		else if(floor_check=="🦍") {
+			allowed_var = "Enemy";
+		}
+		else if(floor_check=="🍌") {
+			bananas = bananas + 1;
+			
+		}
+		else if(floor_check=="🌾") {
+			player_health = player_health + 25;	
+		}
+		else if(floor_check=="🍀") {
+			player_xp = player_xp + 25;
+			skill_points = skill_points + 1;
+			while (player_xp >= lvl_next) {
+			player_lvl = player_lvl + 1;
+			player_xp = player_xp - lvl_next;
+			lvl_next = Math.round(lvl_next * 1.5);
+
+			}
+		}
+		else if(floor_check=="reward") {
+			player_xp = player_xp + 50;
+			skill_points = skill_points + 1;
+			while (player_xp >= lvl_next) {
+			player_lvl = player_lvl + 1;
+			player_xp = player_xp - lvl_next;
+			lvl_next = Math.round(lvl_next * 1.5);}
+		}
+		else if(floor_check=="large_reward") {
+			player_xp = player_xp + 70;
+			skill_points = skill_points + 1;
+			while (player_xp >= lvl_next) {
+			player_lvl = player_lvl + 1;
+			player_xp = player_xp - lvl_next;
+			lvl_next = Math.round(lvl_next * 1.5);}
+		}
+		else {
+			allowed_var = "Free";
+		}
+		document.getElementById("stat").innerHTML = ('bananas: '+bananas+'  health: '+player_health);
+		document.getElementById("header").innerHTML = ('xp: '+player_xp+'    lvl: '+player_lvl);
+		
+		
+	}
+	
+	function move_left() {
+		allowed(map[player_y][player_x-1]);
+		if (allowed_var == "Barrier") {
+			game();
+		}
+		else if(allowed_var == "Enemy") {
+			battleInitiate();
+		}
+		else {
+			map[player_y][player_x-1] = player;
+			map[player_y][player_x] = floor;
+			player_x = player_x - 1;
+			game();
+		}
+		direction = "left";
+		
+		
+	}
+	function move_right() {
+		allowed(map[player_y][player_x+1]);
+		if (allowed_var == "Barrier") {
+			game();
+		}
+		else if(allowed_var == "Enemy") {
+			battleInitiate();
+		}
+		else {
+			map[player_y][player_x+1] = player;
+			map[player_y][player_x] = floor;
+			player_x = player_x+1;
+			game();
+		}
+		direction = "right";
+	}
+	function move_up() {
+		allowed(map[player_y-1][player_x]);
+		if (allowed_var == "Barrier") {
+			game();
+		}
+		else if(allowed_var == "Enemy") {
+			battleInitiate();
+		}
+		else {
+			map[player_y-1][player_x] = player;
+			map[player_y][player_x] = floor;
+			player_y = player_y-1;
+			game();
+		}
+		direction = "up";
+		
+	}
+	function move_down() {
+		allowed(map[player_y+1][player_x]);
+		if (allowed_var == "Barrier") {
+			game();
+		}
+		
+		else if(allowed_var == "Enemy") {
+			battleInitiate();
+		}
+		else {
+			map[player_y+1][player_x] = player;
+			map[player_y][player_x] = floor;
+			player_y = player_y+1;
+			game();
+		}
+		direction = "down";
+	}
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
